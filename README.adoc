@@ -1,0 +1,14 @@
+= Sonarqube Demonstration for Gradle Native
+
+The implementation support every native implementation, e.g. Nokee and Gradle core native (current/software model).
+It relies the `AbstractNativeCompileTask` task which is shared between all implementations.
+
+== How to use?
+
+Execute your build normally with the `sonarqube` task: `./gradlew build sonarqube`
+
+== How it works?
+
+The plugin extract the information from the compile tasks present in the task graph and create a `build-wrapper-dump.json` per project.
+The root project merge all `build-wrapper-dump.json` files which is then passed to the `SonarQubeTask`.
+The task comes from the `org.sonarqube` plugin directly.
