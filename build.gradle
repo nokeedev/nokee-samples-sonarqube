@@ -1,0 +1,15 @@
+plugins {
+    id 'dev.nokeesamples.sonarqube'
+}
+
+tasks.named('sonarqube') {
+    it.properties.putAll([
+            'sonar.projectKey': 'nokeedev_nokee-samples-sonarqube',
+            'sonar.organization': 'nokeedev',
+            'sonar.projectName': 'Nokee Samples for SonarQube',
+            'sonar.projectVersion': '1.0',
+//            'sonar.sources': 'src',
+            'sonar.sourceEncoding': 'UTF-8',
+            'sonar.host.url': 'https://sonarcloud.io'
+    ])
+}

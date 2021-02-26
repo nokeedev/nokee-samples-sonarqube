@@ -1,2 +1,5 @@
 rootProject.name = 'nokee-samples-sonarqube'
+
+includeBuild 'sonarqube-gradle-plugin'
+
 include('app')
