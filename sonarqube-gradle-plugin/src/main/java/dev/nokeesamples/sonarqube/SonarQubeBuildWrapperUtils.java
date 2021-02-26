@@ -18,17 +18,17 @@ import org.gradle.nativeplatform.toolchain.internal.ToolType;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.nio.file.Files;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Callable;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.util.stream.Collectors.*;
+import static java.util.stream.Collectors.toList;
 
 public class SonarQubeBuildWrapperUtils {
     public static String getCurrentVersion() {
-        return "6.15";
+        // Version check is pluginInfo.pluginVersion.startsWith("version" + ".") so using only major version is fine
+        return "6";
     }
 
     public static String getDefaultBuildWrapperFileName() {
