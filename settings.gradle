@@ -3,3 +3,16 @@ rootProject.name = 'nokee-samples-sonarqube'
 includeBuild 'sonarqube-gradle-plugin'
 
 include('app')
+
+plugins.withId('com.gradle.enterprise') {
+    gradleEnterprise {
+        buildScan {
+            termsOfServiceUrl = "https://gradle.com/terms-of-service"
+            termsOfServiceAgree = "yes"
+
+            if (System.getenv('CI')) {
+                tag 'CI'
+            }
+        }
+    }
+}
