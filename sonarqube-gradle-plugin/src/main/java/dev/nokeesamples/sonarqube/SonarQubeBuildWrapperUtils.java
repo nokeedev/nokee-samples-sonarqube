@@ -83,7 +83,6 @@ public class SonarQubeBuildWrapperUtils {
             generalCmd.forEach(builder::cmd);
             builder.cmd(it.getAbsolutePath());
             return builder.build();
-            // TODO: Fill the architecture flag
         }).collect(toList());
     }
 
