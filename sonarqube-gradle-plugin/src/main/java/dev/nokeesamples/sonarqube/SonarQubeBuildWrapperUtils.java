@@ -52,6 +52,9 @@ public class SonarQubeBuildWrapperUtils {
             val stdErr = new ByteArrayOutputStream();
             task.getProject().exec(spec -> {
                 spec.commandLine(executable);
+                if (!executable.endsWith("cl.exe")) {
+                    spec.args("--version");
+                }
                 spec.setStandardOutput(stdOut);
                 spec.setErrorOutput(stdErr);
             }).assertNormalExitValue();
