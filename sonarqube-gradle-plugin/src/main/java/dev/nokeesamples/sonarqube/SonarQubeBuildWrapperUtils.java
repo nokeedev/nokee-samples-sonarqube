@@ -10,6 +10,7 @@ import org.gradle.language.nativeplatform.tasks.AbstractNativeCompileTask;
 import org.gradle.language.objectivec.tasks.ObjectiveCCompile;
 import org.gradle.nativeplatform.platform.internal.NativePlatformInternal;
 import org.gradle.nativeplatform.toolchain.Clang;
+import org.gradle.nativeplatform.toolchain.Gcc;
 import org.gradle.nativeplatform.toolchain.VisualCpp;
 import org.gradle.nativeplatform.toolchain.internal.NativeToolChainInternal;
 import org.gradle.nativeplatform.toolchain.internal.ToolType;
@@ -100,7 +101,9 @@ public class SonarQubeBuildWrapperUtils {
         if (task.getToolChain().get() instanceof VisualCpp) {
             return "msvc-cl";
         } else if (task.getToolChain().get() instanceof Clang) {
-            return "clang"; // TODO: HUGE guess
+            return "clang";
+        } else if (task.getToolChain().get() instanceof Gcc) {
+            return "qcc";
         }
         throw new UnsupportedOperationException("Please fill the value for the other compiler type...");
     }
