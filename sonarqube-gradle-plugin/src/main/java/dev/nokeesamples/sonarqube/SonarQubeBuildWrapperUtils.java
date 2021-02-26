@@ -14,8 +14,10 @@ import org.gradle.nativeplatform.toolchain.VisualCpp;
 import org.gradle.nativeplatform.toolchain.internal.NativeToolChainInternal;
 import org.gradle.nativeplatform.toolchain.internal.ToolType;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.nio.file.Files;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -30,10 +32,27 @@ public class SonarQubeBuildWrapperUtils {
 
     public static Callable<Object> captureIfPresentInTaskGraph(AbstractNativeCompileTask task) {
         return () -> {
-            task.getProject().getTasks().named("generateSonarqube", GenerateSonarQubeBuildWrapperTask.class)
-                    .configure(it -> it.getCaptures().addAll(capture(task)));
+            task.getProject().getTasks().named("generateSonarqube", GenerateSonarQubeBuildWrapperTask.class).configure(it -> {
+                it.getCaptures().add(captureToolChainVersion(task));
+                it.getCaptures().addAll(capture(task));
+            });
             return Collections.emptyList();
         };
+    }
+
+    private static Provider<SonarQubeBuildWrapper.Capture> captureToolChainVersion(AbstractNativeCompileTask task) {
+        return new DefaultProvider<>(() -> {
+            val executable = executable(task);
+            val stdOut = new ByteArrayOutputStream();
+            val stdErr = new ByteArrayOutputStream();
+            task.getProject().exec(spec -> {
+                spec.commandLine(executable);
+                spec.setStandardOutput(stdOut);
+                spec.setErrorOutput(stdErr);
+            }).assertNormalExitValue();
+
+            return new SonarQubeBuildWrapper.Capture(compiler(task), executable, stdOut.toString(), stdErr.toString(), null, null, null);
+        });
     }
 
     private static Provider<Iterable<SonarQubeBuildWrapper.Capture>> capture(AbstractNativeCompileTask task) {

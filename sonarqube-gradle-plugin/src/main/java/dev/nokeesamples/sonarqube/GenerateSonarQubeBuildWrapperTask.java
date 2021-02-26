@@ -25,7 +25,6 @@ public abstract class GenerateSonarQubeBuildWrapperTask extends DefaultTask {
     @TaskAction
     public void doGenerate() throws IOException {
         getBuildWrapperFile().getAsFile().get().createNewFile();
-        // TODO: include output of one CL run
         val buildWrapper = new SonarQubeBuildWrapper(getCurrentVersion(), getCaptures().get());
         write(getBuildWrapperFile().getAsFile().get().toPath(),
                 new GsonBuilder().setPrettyPrinting().create().toJson(buildWrapper).getBytes(StandardCharsets.UTF_8));
