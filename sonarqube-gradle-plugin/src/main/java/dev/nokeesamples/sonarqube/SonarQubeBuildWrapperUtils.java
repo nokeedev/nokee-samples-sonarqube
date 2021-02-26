@@ -109,7 +109,7 @@ public class SonarQubeBuildWrapperUtils {
         } else if (task.getToolChain().get() instanceof Clang) {
             return "clang";
         } else if (task.getToolChain().get() instanceof Gcc) {
-            return "qcc";
+            return "clang";
         }
         throw new UnsupportedOperationException("Please fill the value for the other compiler type...");
     }
