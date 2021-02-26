@@ -90,7 +90,7 @@ public class SonarQubeBuildWrapperUtils {
 
     @SneakyThrows
     private static List<String> load(File optionsFile) {
-        return Files.readAllLines(optionsFile.toPath(), UTF_8);
+        return Files.lines(optionsFile.toPath(), UTF_8).map(SonarQubeBuildWrapperUtils::unquote).collect(toList());
     }
 
     private static List<String> environmentVariables() {
@@ -121,5 +121,12 @@ public class SonarQubeBuildWrapperUtils {
             return ToolType.OBJECTIVEC_COMPILER;
         }
         throw new UnsupportedOperationException("Native compile task not supported...");
+    }
+
+    private static String unquote(String s) {
+        if (s.startsWith("\"") && s.endsWith("\"")) {
+            return s.substring(1, s.length() - 1);
+        }
+        return s;
     }
 }
