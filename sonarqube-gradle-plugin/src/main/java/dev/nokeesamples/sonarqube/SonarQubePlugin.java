@@ -1,10 +1,7 @@
 package dev.nokeesamples.sonarqube;
 
 import lombok.val;
-import org.gradle.api.Plugin;
-import org.gradle.api.Project;
-import org.gradle.api.Task;
-import org.gradle.api.Transformer;
+import org.gradle.api.*;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.ConfigurationContainer;
 import org.gradle.api.artifacts.dsl.DependencyHandler;
@@ -23,6 +20,7 @@ import javax.inject.Inject;
 import java.util.Set;
 
 import static dev.nokeesamples.sonarqube.SonarQubeBuildWrapperUtils.captureIfPresentInTaskGraph;
+import static dev.nokeesamples.sonarqube.SonarQubeBuildWrapperUtils.getDefaultBuildWrapperFileName;
 
 public abstract class SonarQubePlugin implements Plugin<Project> {
     @Inject
@@ -54,7 +52,8 @@ public abstract class SonarQubePlugin implements Plugin<Project> {
                 task.setGroup("verification");
                 task.setDescription("Analyze using sonarqube");
 
-                task.getProperties().put("sonar.cfamily.build-wrapper-output", mergeTask.flatMap(MergeSonarQubeBuildWrapperTask::getBuildWrapperFile).get().getAsFile().getParent());
+                task.getProperties()
+                        .put("sonar.cfamily.build-wrapper-output", mergeTask.flatMap(MergeSonarQubeBuildWrapperTask::getBuildWrapperFile).get().getAsFile().getParent());
             });
         }
     }
@@ -73,7 +72,7 @@ public abstract class SonarQubePlugin implements Plugin<Project> {
 
     private TaskProvider<GenerateSonarQubeBuildWrapperTask> createGenerateTask() {
         return getTasks().register("generateSonarqube", GenerateSonarQubeBuildWrapperTask.class, task -> {
-            task.getBuildWrapperFile().value(temporaryDirectory(task).map(it -> it.file("build-wrapper.json")));
+            task.getBuildWrapperFile().value(temporaryDirectory(task).map(it -> it.file(getDefaultBuildWrapperFileName())));
             task.getCaptures().finalizeValueOnRead();
             task.mustRunAfter(getAllNativeCompileTasks());
         });
@@ -91,7 +90,7 @@ public abstract class SonarQubePlugin implements Plugin<Project> {
     private TaskProvider<MergeSonarQubeBuildWrapperTask> createMergeTask(Configuration sonarqube) {
         return getTasks().register("mergeSonarqube", MergeSonarQubeBuildWrapperTask.class, task -> {
             task.getSources().from(sonarqube.getIncoming().artifactView(it -> it.setLenient(true)).getFiles());
-            task.getBuildWrapperFile().value(getLayout().getBuildDirectory().file("tmp/" + task.getName() + "/build-wrapper.json"));
+            task.getBuildWrapperFile().value(temporaryDirectory(task).map(it -> it.file(getDefaultBuildWrapperFileName())));
         });
     }
 

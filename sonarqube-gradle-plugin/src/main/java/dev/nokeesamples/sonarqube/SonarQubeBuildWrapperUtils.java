@@ -31,6 +31,10 @@ public class SonarQubeBuildWrapperUtils {
         return "6.15";
     }
 
+    public static String getDefaultBuildWrapperFileName() {
+        return "build-wrapper-dump.json";
+    }
+
     public static Callable<Object> captureIfPresentInTaskGraph(AbstractNativeCompileTask task) {
         return () -> {
             task.getProject().getTasks().named("generateSonarqube", GenerateSonarQubeBuildWrapperTask.class).configure(it -> {
