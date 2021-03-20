@@ -31,6 +31,6 @@ public abstract class MergeSonarQubeBuildWrapperTask extends DefaultTask {
             val buildWrapper = new Gson().fromJson(Files.newBufferedReader(source.toPath(), UTF_8), SonarQubeBuildWrapper.class);
             buildWrapper.getCaptures().forEach(builder::capture);
         }
-        Files.write(getBuildWrapperFile().getAsFile().get().toPath(), new GsonBuilder().setPrettyPrinting().create().toJson(builder.build()).getBytes(UTF_8));
+        Files.write(getBuildWrapperFile().getAsFile().get().toPath(), new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create().toJson(builder.build()).getBytes(UTF_8));
     }
 }

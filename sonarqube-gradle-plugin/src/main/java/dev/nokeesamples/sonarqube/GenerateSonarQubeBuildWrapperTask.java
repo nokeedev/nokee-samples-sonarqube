@@ -27,6 +27,6 @@ public abstract class GenerateSonarQubeBuildWrapperTask extends DefaultTask {
         getBuildWrapperFile().getAsFile().get().createNewFile();
         val buildWrapper = new SonarQubeBuildWrapper(getCurrentVersion(), getCaptures().get());
         write(getBuildWrapperFile().getAsFile().get().toPath(),
-                new GsonBuilder().setPrettyPrinting().create().toJson(buildWrapper).getBytes(StandardCharsets.UTF_8));
+                new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create().toJson(buildWrapper).getBytes(StandardCharsets.UTF_8));
     }
 }
