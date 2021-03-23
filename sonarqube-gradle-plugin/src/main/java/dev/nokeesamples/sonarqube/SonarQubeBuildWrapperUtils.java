@@ -21,6 +21,7 @@ import java.nio.file.Files;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.stream.Stream;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.stream.Collectors.toList;
@@ -92,7 +93,18 @@ public class SonarQubeBuildWrapperUtils {
 
     @SneakyThrows
     private static List<String> load(File optionsFile) {
-        return Files.lines(optionsFile.toPath(), UTF_8).map(SonarQubeBuildWrapperUtils::unquote).collect(toList());
+        return Files.lines(optionsFile.toPath(), UTF_8).map(SonarQubeBuildWrapperUtils::unquote).flatMap(SonarQubeBuildWrapperUtils::breakDownIncludeFlags).collect(toList());
+    }
+
+    private static Stream<String> breakDownIncludeFlags(String flag) {
+        if (flag.length() > 2) {
+            if (flag.startsWith("/I")) {
+                return Stream.of("/I", flag.substring(2));
+            } else if (flag.startsWith("-I")) {
+                return Stream.of("-I", flag.substring(2));
+            }
+        }
+        return Stream.of(flag);
     }
 
     private static List<String> environmentVariables() {
